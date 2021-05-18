@@ -3,9 +3,10 @@ addpath('classes');
 addpath('utility'); 
 
 %% edit this
-root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'sighted_children_bolzaneto';   ... 'bambini_bolzaneto' 'adulti_iit_1'
-task_folder         = 'ATVBSSU';  ... 'ATBSSU' 'ATVBDSU' 'ATVBSSU'
+
+root_dir            = fullfile(pwd, 'input_data');
+experiment_folder   = '';           ... possible subfolder of 'input_data'
+task_folder         = 'ATVBSSU';    ... possible subfolder of experiment_folder
 results_folder      = 'results';
 
 %% group variables
@@ -43,15 +44,14 @@ for f=1:nsubj
 
 end
 
-subjects.plotSubject("arni", xdata, titleLabels)
+...subjects.plotSubject("arni", xdata, titleLabels)
 
 ...arni = subjects.getSubjectByLabel('arni');
 
-
 ...subjects.plotSubjectsSJ2("age", [8, 9]);
-
-subjects.plotSubjectsSJ2('label', 'arni');
+...subjects.plotSubjectsSJ2('label', 'arni');
 ...subjects.plotSubjectsSJ2();
+
 ...subjects.plotSubjectsGFit();
 ...subjects.plotSubjectsGFit("age", [8, 9]);
 ...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
