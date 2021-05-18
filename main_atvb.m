@@ -44,19 +44,21 @@ for f=1:nsubj
 
 end
 
-...subjects.plotSubject("arni", xdata, titleLabels)
+% now data are loaded in subjects, an instance of GroupATVB
 
-...arni = subjects.getSubjectByLabel('arni');
+...subjects.plotSubject("arni", xdata, titleLabels)     ... plot gaussian fit of a single subect
 
-...subjects.plotSubjectsSJ2("age", [8, 9]);
-...subjects.plotSubjectsSJ2('label', 'arni');
-...subjects.plotSubjectsSJ2();
+...arni = subjects.getSubjectByLabel('arni');           ... how to get a specific subject instance
 
-...subjects.plotSubjectsGFit();
-...subjects.plotSubjectsGFit("age", [8, 9]);
-...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
+...subjects.plotSubjectsSJ2("age", [8, 9]);             ... plot and SJ2 (stanley) metrics of all subject aged 8 & 9
+...subjects.plotSubjectsSJ2('label', 'arni');           ... plot and SJ2 (stanley) metrics of one subject
+...subjects.plotSubjectsSJ2();                          ... plot and SJ2 (stanley) metrics of all subjects
 
-subjects.create_tabbed_data(result_file);
+...subjects.plotSubjectsGFit();                         ... plot gaussian fit of all subjects
+...subjects.plotSubjectsGFit("age", [8, 9]);            ... plot gaussian fit of all subject aged 8 & 9
+...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m"); ... plot gaussian fit of all male subject aged 8 & 9
+
+subjects.create_tabbed_data(result_file);               ... create results file
 
 clear f file_name data filename_parts subj files
 clear xlabels xdata ylimits titleLabels taskfolder root_dir data_dir results_folder result_file experiment_folder task_folder nsubj
