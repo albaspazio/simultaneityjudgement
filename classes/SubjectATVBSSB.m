@@ -4,6 +4,7 @@ classdef SubjectATVB < Subject
         a_tv
         t_av
         v_at
+        errors
     end
     
     methods
@@ -179,7 +180,7 @@ classdef SubjectATVB < Subject
                                                                      'V_AT', self.v_at.ntrial, self.v_at.mu, self.v_at.sigma);             
         end
         
-        function plotData(self, xdata, titles)
+        function plotData(self, xdata, titles, ylimits)
             
             d1 = self.a_tv.data;
             d2 = self.t_av.data;
@@ -194,6 +195,7 @@ classdef SubjectATVB < Subject
             plot(xdata,y1,'*b');
             plot(xdata,d1,'.k');
             title([self.label titles{1}]);
+            ylim(ylimits)
             text(6,20, ['mu = ' num2str(self.a_tv.mu)]);
             text(6,10, ['sigma = ' num2str(self.a_tv.sigma)]);
             ...set(gca,'xtick',(1:13),'xticklabel') ... ,xlabels)            

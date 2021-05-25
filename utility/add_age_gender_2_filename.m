@@ -5,11 +5,11 @@
 %% edit this
 % root_dir    = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/bambini_bolzaneto/';
 % root_dir    = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/nonvedenti_ragazzi_chiossone/';
-root_dir    = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/adulti_iit_1/';
+root_dir    = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/blind_adult_iit_1/';
 ...data_dir        = 'E:\\Dropbox\\BIODOCS\\projects\\Apps\\PsySuite\\DATA\\bambini_bolzaneto\\';
     
 
-task_folder = 'ATVBDSU';  ... 'ATBSSU' 'ATVBDSU' 'ATVBSSU'
+task_folder = 'ATBSSU'; ...'ATVBDSU';  ... 'ATBSSU' 'ATVBDSU' 'ATVBSSU'
 
 
 data_dir    = fullfile(root_dir, task_folder);

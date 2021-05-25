@@ -4,12 +4,14 @@
         a_tv
         t_av
         v_at
-        latencies = 13
-        err_simult
+        errors_a_tv
+        errors_t_av
+        errors_v_at
     end
     
     methods
         
+        %% constructor
         function self = SubjectATVB(varargin)
             self@Subject(varargin{1:6}); 
             
@@ -19,19 +21,21 @@
                 self = self.gfitData();
                 self = self.SJ2fitData();
             end
-        end            
-            
-       
+        end
+        
+        %%
         function self = processData(self, data)
             
-            data_a_tv = zeros(1,self.latencies);
-            data_t_av = zeros(1,self.latencies);
-            data_v_at = zeros(1,self.latencies);
+            data_a_tv = zeros(1, self.latencies);
+            data_t_av = zeros(1, self.latencies);
+            data_v_at = zeros(1, self.latencies);
 
-            cnt_data_a_tv = zeros(1,self.latencies);
-            cnt_data_t_av = zeros(1,self.latencies);
-            cnt_data_v_at = zeros(1,self.latencies);
+            cnt_data_a_tv = zeros(1, self.latencies);
+            cnt_data_t_av = zeros(1, self.latencies);
+            cnt_data_v_at = zeros(1, self.latencies);
 
+            midlatency = ceil(self.latencies/2);  ...13 --> 7, 15 --> 8
+            
             for n=1:length(data.type)
 
                 ... determine value to insert
@@ -44,13 +48,13 @@
                 if(data.type(n) == 0)
 
                     ... put simultaneous trials in all three arrays
-                    data_a_tv(7) = data_a_tv(7) + value;
-                    data_t_av(7) = data_t_av(7) + value;
-                    data_v_at(7) = data_v_at(7) + value;
+                    data_a_tv(midlatency) = data_a_tv(midlatency) + value;
+                    data_t_av(midlatency) = data_t_av(midlatency) + value;
+                    data_v_at(midlatency) = data_v_at(midlatency) + value;
 
-                    cnt_data_a_tv(7) = cnt_data_a_tv(7) + 1;
-                    cnt_data_t_av(7) = cnt_data_t_av(7) + 1;
-                    cnt_data_v_at(7) = cnt_data_v_at(7) + 1;
+                    cnt_data_a_tv(midlatency) = cnt_data_a_tv(midlatency) + 1;
+                    cnt_data_t_av(midlatency) = cnt_data_t_av(midlatency) + 1;
+                    cnt_data_v_at(midlatency) = cnt_data_v_at(midlatency) + 1;
 
                 else
                     ... shifted trials
@@ -87,58 +91,106 @@
             data_v_at = (data_v_at*100)./cnt_data_v_at;
 
             self.a_tv.data   = data_a_tv;
-            self.a_tv.ntrial = sum(cnt_data_a_tv);
             self.t_av.data   = data_t_av;
-            self.t_av.ntrial = sum(cnt_data_t_av);
             self.v_at.data   = data_v_at;
+            
+            self.a_tv.ntrial = sum(cnt_data_a_tv);
+            self.t_av.ntrial = sum(cnt_data_t_av);
             self.v_at.ntrial = sum(cnt_data_v_at);
             
             self.ntrials     = length(data.type);
-            
-            self.err_simult  = 100 - data_a_tv(7);
         end
         
         function [arr, cnt_arr] = putValue(self, val, arr, cnt_arr, delay, first_smaller)
 
             id = 1;
-            switch(num2str(delay))
-                case '50'
-                    if(first_smaller == true)
-                        id = 6;
-                    else
-                        id = 8;
-                    end
-                case '100'
-                    if(first_smaller == true)
-                        id = 5;
-                    else
-                        id = 9;
-                    end            
-                case '200'
-                    if(first_smaller == true)
-                        id = 4;
-                    else
-                        id = 10;
-                    end            
-                case '300'
-                    if(first_smaller == true)
-                        id = 3;
-                    else
-                        id = 11;
-                    end            
-                case '400'
-                    if(first_smaller == true)
-                        id = 2;
-                    else
-                        id = 12;
-                    end            
-                case '800'
-                    if(first_smaller == true)
-                        id = 1;
-                    else
-                        id = 13;
-                    end            
+            if self.latencies == 13
+
+                switch(num2str(delay))
+                    case '50'
+                        if(first_smaller == true)
+                            id = 6;
+                        else
+                            id = 8;
+                        end
+                    case '100'
+                        if(first_smaller == true)
+                            id = 5;
+                        else
+                            id = 9;
+                        end            
+                    case '200'
+                        if(first_smaller == true)
+                            id = 4;
+                        else
+                            id = 10;
+                        end            
+                    case '300'
+                        if(first_smaller == true)
+                            id = 3;
+                        else
+                            id = 11;
+                        end            
+                    case '400'
+                        if(first_smaller == true)
+                            id = 2;
+                        else
+                            id = 12;
+                        end            
+                    case '800'
+                        if(first_smaller == true)
+                            id = 1;
+                        else
+                            id = 13;
+                        end            
+                end
+            else
+                switch(num2str(delay))
+                    case '50'
+                        if(first_smaller == true)
+                            id = 7;
+                        else
+                            id = 9;
+                        end
+                    case '100'
+                        if(first_smaller == true)
+                            id = 6;
+                        else
+                            id = 10;
+                        end            
+                    case '200'
+                        if(first_smaller == true)
+                            id = 5;
+                        else
+                            id = 11;
+                        end            
+                    case '300'
+                        if(first_smaller == true)
+                            id = 4;
+                        else
+                            id = 12;
+                        end            
+                    case '400'
+                        if(first_smaller == true)
+                            id = 3;
+                        else
+                            id = 13;
+                        end            
+                    case '800'
+                        if(first_smaller == true)
+                            id = 2;
+                        else
+                            id = 14;
+                        end  
+                    case '1200'
+                        if(first_smaller == true)
+                            id = 1;
+                        else
+                            id = 15;
+                        end                          
+                end                
             end
+            
             arr(id)     = arr(id) + val;
             cnt_arr(id) = cnt_arr(id) + 1;     
         end        
@@ -179,41 +231,78 @@
         
         function self = getErrors(self)
             
-            self.err_simult     = 100 - self.a_tv.data(7);
+            midlatency = ceil(self.latencies/2);  ...13 --> 7, 15 --> 8
             
-            self.a_tv.err_a_tv  = 100 - mean(self.a_tv.data(1:6));
-            self.a_tv.err_tv_a  = 100 - mean(self.a_tv.data(8:13));
+            for t=1:length(self.a_tv.data)
+                if t == midlatency
+                    self.errors_a_tv(t) = 100 - self.a_tv.data(t);
+                else
+                    self.errors_a_tv(t) = self.a_tv.data(t);
+                end
+            end
             
-            self.t_av.err_t_av  = 100 - mean(self.t_av.data(1:6));
-            self.t_av.err_av_t  = 100 - mean(self.t_av.data(8:13));
+            for t=1:length(self.t_av.data)
+                if t == midlatency
+                    self.errors_t_av(t) = 100 - self.t_av.data(t);
+                else
+                    self.errors_t_av(t) = self.t_av.data(t);
+                end
+            end            
             
-            self.v_at.err_v_at  = 100 - mean(self.v_at.data(1:6));
-            self.v_at.err_at_v  = 100 - mean(self.v_at.data(8:13));            
-
+            for t=1:length(self.v_at.data)
+                if t == midlatency
+                    self.errors_v_at(t) = 100 - self.v_at.data(t);
+                else
+                    self.errors_v_at(t) = self.v_at.data(t);
+                end
+            end            
         end
         
         % label, group, age, gender, experiment, task, ntrials,
         % err_simult, err_1_23, err_23_1, mu, sigma,
         % TFsb, RFsb, sr, mp, peak
         function writeData(self, fid)
-            
-            fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
-                         self.label, self.group, self.age, self.gender, self.experiment, 'A_TV', self.a_tv.ntrial, ...
-                         self.err_simult, self.a_tv.err_a_tv, self.a_tv.err_tv_a, self.a_tv.gfit.mu, self.a_tv.gfit.sigma,...
-                         self.a_tv.sj2fit.pm.SJ2_TFsb, self.a_tv.sj2fit.pm.SJ2_RFsb, self.a_tv.sj2fit.pm.SJ2_sr, self.a_tv.sj2fit.pm.SJ2_mp, self.a_tv.sj2fit.pm.SJ2_peak);
+            if self.latencies == 13
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'A_TV', self.a_tv.ntrial, ...
+                             self.a_tv.gfit.mu, self.a_tv.gfit.sigma,...
+                             self.a_tv.sj2fit.pm.SJ2_TFsb, self.a_tv.sj2fit.pm.SJ2_RFsb, self.a_tv.sj2fit.pm.SJ2_sr, self.a_tv.sj2fit.pm.SJ2_mp, self.a_tv.sj2fit.pm.SJ2_peak,...
+                             self.errors_a_tv(1),self.errors_a_tv(2),self.errors_a_tv(3),self.errors_a_tv(4),self.errors_a_tv(5),self.errors_a_tv(6),self.errors_a_tv(7),self.errors_a_tv(8),self.errors_a_tv(9),self.errors_a_tv(10),self.errors_a_tv(11),self.errors_a_tv(12),self.errors_a_tv(13));
 
-            fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
-                         self.label, self.group, self.age, self.gender, self.experiment, 'T_AV', self.t_av.ntrial, ...
-                         self.err_simult, self.t_av.err_t_av, self.t_av.err_av_t, self.t_av.gfit.mu, self.t_av.gfit.sigma,...
-                         self.t_av.sj2fit.pm.SJ2_TFsb, self.t_av.sj2fit.pm.SJ2_RFsb, self.t_av.sj2fit.pm.SJ2_sr, self.t_av.sj2fit.pm.SJ2_mp, self.t_av.sj2fit.pm.SJ2_peak);
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'T_AV', self.t_av.ntrial, ...
+                             self.t_av.gfit.mu, self.t_av.gfit.sigma,...
+                             self.t_av.sj2fit.pm.SJ2_TFsb, self.t_av.sj2fit.pm.SJ2_RFsb, self.t_av.sj2fit.pm.SJ2_sr, self.t_av.sj2fit.pm.SJ2_mp, self.t_av.sj2fit.pm.SJ2_peak, ...
+                             self.errors_t_av(1),self.errors_t_av(2),self.errors_t_av(3),self.errors_t_av(4),self.errors_t_av(5),self.errors_t_av(6),self.errors_t_av(7),self.errors_t_av(8),self.errors_t_av(9),self.errors_t_av(10),self.errors_t_av(11),self.errors_t_av(12),self.errors_t_av(13));
 
-            fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
-                         self.label, self.group, self.age, self.gender, self.experiment, 'V_AT', self.v_at.ntrial, ...
-                         self.err_simult, self.v_at.err_v_at, self.v_at.err_at_v, self.v_at.gfit.mu, self.v_at.gfit.sigma,...
-                         self.v_at.sj2fit.pm.SJ2_TFsb, self.v_at.sj2fit.pm.SJ2_RFsb, self.v_at.sj2fit.pm.SJ2_sr, self.v_at.sj2fit.pm.SJ2_mp, self.v_at.sj2fit.pm.SJ2_peak);
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'V_AT', self.v_at.ntrial, ...
+                             self.v_at.gfit.mu, self.v_at.gfit.sigma,...
+                             self.v_at.sj2fit.pm.SJ2_TFsb, self.v_at.sj2fit.pm.SJ2_RFsb, self.v_at.sj2fit.pm.SJ2_sr, self.v_at.sj2fit.pm.SJ2_mp, self.v_at.sj2fit.pm.SJ2_peak, ...
+                             self.errors_v_at(1),self.errors_v_at(2),self.errors_v_at(3),self.errors_v_at(4),self.errors_v_at(5),self.errors_v_at(6),self.errors_v_at(7),self.errors_v_at(8),self.errors_v_at(9),self.errors_v_at(10),self.errors_v_at(11),self.errors_v_at(12),self.errors_v_at(13));
+            else
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'A_TV', self.a_tv.ntrial, ...
+                             self.a_tv.gfit.mu, self.a_tv.gfit.sigma,...
+                             self.a_tv.sj2fit.pm.SJ2_TFsb, self.a_tv.sj2fit.pm.SJ2_RFsb, self.a_tv.sj2fit.pm.SJ2_sr, self.a_tv.sj2fit.pm.SJ2_mp, self.a_tv.sj2fit.pm.SJ2_peak, ...
+                             self.errors_a_tv(1),self.errors_a_tv(2),self.errors_a_tv(3),self.errors_a_tv(4),self.errors_a_tv(5),self.errors_a_tv(6),self.errors_a_tv(7),self.errors_a_tv(8),self.errors_a_tv(9),self.errors_a_tv(10),self.errors_a_tv(11),self.errors_a_tv(12),self.errors_a_tv(13),self.errors_a_tv(14),self.errors_a_tv(15));
+
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'T_AV', self.t_av.ntrial, ...
+                             self.t_av.gfit.mu, self.t_av.gfit.sigma,...
+                             self.t_av.sj2fit.pm.SJ2_TFsb, self.t_av.sj2fit.pm.SJ2_RFsb, self.t_av.sj2fit.pm.SJ2_sr, self.t_av.sj2fit.pm.SJ2_mp, self.t_av.sj2fit.pm.SJ2_peak, ...
+                             self.errors_t_av(1),self.errors_t_av(2),self.errors_t_av(3),self.errors_t_av(4),self.errors_t_av(5),self.errors_t_av(6),self.errors_t_av(7),self.errors_t_av(8),self.errors_t_av(9),self.errors_t_av(10),self.errors_t_av(11),self.errors_t_av(12),self.errors_t_av(13),self.errors_t_av(14),self.errors_t_av(15));
+
+
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f%4.2f\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'V_AT', self.v_at.ntrial, ...
+                             self.v_at.gfit.mu, self.v_at.gfit.sigma,...
+                             self.v_at.sj2fit.pm.SJ2_TFsb, self.v_at.sj2fit.pm.SJ2_RFsb, self.v_at.sj2fit.pm.SJ2_sr, self.v_at.sj2fit.pm.SJ2_mp, self.v_at.sj2fit.pm.SJ2_peak, ...
+                             self.errors_v_at(1),self.errors_v_at(2),self.errors_v_at(3),self.errors_v_at(4),self.errors_v_at(5),self.errors_v_at(6),self.errors_v_at(7),self.errors_v_at(8),self.errors_v_at(9),self.errors_v_at(10),self.errors_v_at(11),self.errors_v_at(12),self.errors_v_at(13),self.errors_t_av(14),self.errors_t_av(15));
+            end
         end
         
-        function plotData(self, xdata, titles)
+        function plotData(self, xdata, titles, ylimits)
             
             d1 = self.a_tv.data;
             d2 = self.t_av.data;
@@ -228,6 +317,7 @@
             plot(xdata,y1,'*b');
             plot(xdata,d1,'.k');
             title([self.label titles{1}]);
+            ylim(ylimits)
             text(6,20, ['mu = ' num2str(self.a_tv.gfit.mu)]);
             text(6,10, ['sigma = ' num2str(self.a_tv.gfit.sigma)]);
 
@@ -236,6 +326,7 @@
             plot(xdata,y2,'*b');
             plot(xdata,d2,'.k');
             title([self.label titles{2}]);
+            ylim(ylimits)
             text(6,20, ['mu = ' num2str(self.t_av.gfit.mu)]);
             text(6,10, ['sigma = ' num2str(self.t_av.gfit.sigma)]);
 
@@ -244,6 +335,7 @@
             plot(xdata,y3,'*b');
             plot(xdata,d3,'.k');
             title([self.label titles{3}]);
+            ylim(ylimits)
             text(6,20, ['mu = ' num2str(self.v_at.gfit.mu)]);
             text(6,10, ['sigma = ' num2str(self.v_at.gfit.sigma)]);
         end     ... end plotData

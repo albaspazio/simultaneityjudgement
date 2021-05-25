@@ -6,6 +6,8 @@ classdef Group
         xdata
         titleLabels
         ylimits
+        latencies
+
     end
       
     methods
@@ -17,7 +19,7 @@ classdef Group
            self.xdata       = xdata;
            self.titleLabels = titleLabels;
            self.ylimits     = ylimits;
-           
+           self.latencies   = length(xdata);
         end
     
         function self = add(self, subj)
@@ -25,6 +27,7 @@ classdef Group
               self.subjects{self.number}  = subj;
         end
         
+        %% GET/FILTER SUBJECTS
         % returns subset of subjects' cellarray 
         function [filtered_subjects, subjs_title] = filterSubjects(self, varargin)
             
@@ -84,9 +87,10 @@ classdef Group
                end
             end
         end
-        
+                
+        %% PLOT DATA
         function plotSubject(self, label, xdata, titleLabels)
-            self.getSubjectByLabel(label).plotData(xdata, titleLabels);
+            self.getSubjectByLabel(label).plotData(xdata, titleLabels, self.ylimits);
         end
         
         function plotDataWithError(self, data, datastd, mu, sigma, titl)
@@ -97,7 +101,7 @@ classdef Group
             errorbar(self.xdata, data, datastd, 'Color', 'b');
             title(titl);
             plot(self.xdata, data, 'Marker', 'o', 'MarkerFaceColor', 'b');
-            
+            ylim(self.ylimits);
             text(0,20, ['mu = ' num2str(mu)]);
             text(0,17, ['sigma = ' num2str(sigma)]);         
         end
@@ -110,6 +114,7 @@ classdef Group
             errorbar(self.xdata, data, datastd);
             title(titl);
             plot(self.xdata, fity, 'Marker', '*'); ..., 'MarkerFaceColor', 'b'); ..., 'LineStyle', '-', 'Color', 'b');
+            ylim(self.ylimits);
             text(6,20, ['mu = ' num2str(mu)]);
             text(6,10, ['sigma = ' num2str(sigma)]);         
         end
@@ -122,12 +127,13 @@ classdef Group
             plot(self.xdata, y, 'Marker', '*', 'MarkerFaceColor', 'b', 'LineStyle', '-', 'Color', 'b');
             plot(self.xdata, d, 'Marker', 'x', 'MarkerFaceColor', 'g', 'LineStyle', '--', 'Color', 'g');
             title(titl);
+            ylim(self.ylimits)
             text(6,20, ['mu = ' num2str(mu)]);
             text(6,10, ['sigma = ' num2str(sigma)]);
         end
         
     end
-   
+  
     
    methods(Static)
        

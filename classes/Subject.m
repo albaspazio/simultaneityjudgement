@@ -8,6 +8,7 @@ classdef Subject
         experiment
         xdata
         ntrials
+        latencies
     end
     
     methods
@@ -18,6 +19,7 @@ classdef Subject
             obj.group       = grp;
             obj.experiment  = exp;
             obj.xdata       = xdata;
+            obj.latencies   = length(xdata);
         end
     end
 end

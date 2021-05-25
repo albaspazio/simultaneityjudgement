@@ -1,45 +1,27 @@
 classdef GroupATVB < Group
-      
-    properties
-        latencies = 13
-    end
     
     methods
        
-        function self = GroupATVB(len, xlabels, xdata, titleLabels, ylimits)
-           self@Group(len, xlabels, xdata, titleLabels, ylimits);
+        function self = GroupATVB(varargin) % len, xlabels, xdata, titleLabels, ylimits
+           self@Group(varargin{:});
         end
-               
-        function plotSubjectsGFit(self, varargin)
-            
-            [filtered_subjects, subjs_title] = self.filterSubjects(varargin{:});
 
-            [stat_a_tv, stat_t_av, stat_v_at] = self.getSubjectsStat(filtered_subjects);
-            
-            stat_a_tv.gfit = StatsFits.gaussianFit(stat_a_tv.data_mean, self.xdata);
-            stat_t_av.gfit = StatsFits.gaussianFit(stat_t_av.data_mean, self.xdata);
-            stat_v_at.gfit = StatsFits.gaussianFit(stat_v_at.data_mean, self.xdata);
-            
-            title_a_tv = [subjs_title " A vs TV"];
-            title_t_av = [subjs_title " T vs AV"];
-            title_v_at = [subjs_title " V vs AT"];            
-            
-            self.plotDataWithError(stat_a_tv.data_mean, stat_a_tv.data_sem, stat_a_tv.gfit.mu, stat_a_tv.gfit.sigma, title_a_tv);
-            self.plotDataWithError(stat_t_av.data_mean, stat_t_av.data_sem, stat_t_av.gfit.mu, stat_t_av.gfit.sigma, title_t_av);
-            self.plotDataWithError(stat_v_at.data_mean, stat_v_at.data_sem, stat_v_at.gfit.mu, stat_v_at.gfit.sigma, title_v_at);
-            
-%             self.plotDataWithErrorFit(stat_a_tv.data_mean, stat_a_tv.data_sem, stat_a_tv.fit.y, stat_a_tv.fit.mu, stat_a_tv.fit.sigma, title_a_tv);
-%             self.plotDataWithErrorFit(stat_t_av.data_mean, stat_t_av.data_sem, stat_t_av.fit.y, stat_t_av.fit.mu, stat_t_av.fit.sigma, title_a_tv);
-%             self.plotDataWithErrorFit(stat_v_at.data_mean, stat_v_at.data_sem, stat_v_at.fit.y, stat_v_at.fit.mu, stat_v_at.fit.sigma, title_a_tv);
-        end
                 
         function create_tabbed_data(self, filename)
             
             fid = fopen(filename, 'w');
 
-            fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
-                         'label','group','age','gender','experiment','task','ntrials', 'err_sim', 'err_1_23', 'err_23_1', 'mu','sigma', ...
-                         'TFsb', 'RFsb', 'sr', 'mp', 'peak');
+            if self.subjects{1}.latencies == 15
+                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
+                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
+                             'e_-1200','e_-800','e_-400','e_-300','e_-200','e_-100','e_50','e_0','e_50','e_100','e_200','e_300','e_400','e_800','e_1200');
+            else
+                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
+                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
+                             'e_-800','e_-400','e_-300','e_-200','e_-100','e_50','e_0','e_50','e_100','e_200','e_300','e_400','e_800');
+            end
 
             for k=1:self.number
                 self.subjects{k}.writeData(fid);
@@ -71,6 +53,30 @@ classdef GroupATVB < Group
             stat_v_at = StatsFits.getStat(data_v_at);
            
         end   
+        
+        %% PLOT DATA       
+        function plotSubjectsGFit(self, varargin)
+            
+            [filtered_subjects, subjs_title] = self.filterSubjects(varargin{:});
+
+            [stat_a_tv, stat_t_av, stat_v_at] = self.getSubjectsStat(filtered_subjects);
+            
+            stat_a_tv.gfit = StatsFits.gaussianFit(stat_a_tv.data_mean, self.xdata);
+            stat_t_av.gfit = StatsFits.gaussianFit(stat_t_av.data_mean, self.xdata);
+            stat_v_at.gfit = StatsFits.gaussianFit(stat_v_at.data_mean, self.xdata);
+            
+            title_a_tv = [subjs_title " A vs TV"];
+            title_t_av = [subjs_title " T vs AV"];
+            title_v_at = [subjs_title " V vs AT"];            
+            
+            self.plotDataWithError(stat_a_tv.data_mean, stat_a_tv.data_sem, stat_a_tv.gfit.mu, stat_a_tv.gfit.sigma, title_a_tv);
+            self.plotDataWithError(stat_t_av.data_mean, stat_t_av.data_sem, stat_t_av.gfit.mu, stat_t_av.gfit.sigma, title_t_av);
+            self.plotDataWithError(stat_v_at.data_mean, stat_v_at.data_sem, stat_v_at.gfit.mu, stat_v_at.gfit.sigma, title_v_at);
+            
+%             self.plotDataWithErrorFit(stat_a_tv.data_mean, stat_a_tv.data_sem, stat_a_tv.fit.y, stat_a_tv.fit.mu, stat_a_tv.fit.sigma, title_a_tv);
+%             self.plotDataWithErrorFit(stat_t_av.data_mean, stat_t_av.data_sem, stat_t_av.fit.y, stat_t_av.fit.mu, stat_t_av.fit.sigma, title_a_tv);
+%             self.plotDataWithErrorFit(stat_v_at.data_mean, stat_v_at.data_sem, stat_v_at.fit.y, stat_v_at.fit.mu, stat_v_at.fit.sigma, title_a_tv);
+        end
         
         function [stat_a_tv, stat_t_av, stat_v_at] = plotSubjectsSJ2(self, varargin)
             
