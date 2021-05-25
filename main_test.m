@@ -3,17 +3,16 @@ addpath('classes');
 addpath('utility'); 
 
 %% edit this
-root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'sighted_adult_iit_1';
-task_folder         = 'ATVBSSU';
-results_folder      = 'results';
-result_postfix      = '';
+root_dir            = fullfile(pwd, 'input_data');
+experiment_folder   = '';           ... possible subfolder of 'input_data'
+task_folder         = 'ATVBSSU';    ... possible subfolder of experiment_folder
+result_postfix      = '';           ... string to append to result file
 
 %% group variables
-xlabels         = {'-800', '-400', '-300', '-200','-100','-50','0','50','100','200','300','400','800'};
+xlabels         = {'-1200', '-800', '-400', '-300', '-200','-100','-50','0','50','100','200','300','400','800','1200'};
 titleLabels     = {'A vs TV', 'T vs AV', 'V vs AT'};
 ylimits         = [0, 100];
-xdata           = [-800, -400, -300, -200, -100, -50, 0, 50, 100, 200, 300, 400, 800];
+xdata           = [-1200, -800, -400, -300, -200, -100, -50, 0, 50, 100, 200, 300, 400, 800, 1200];
 
 %% start processing
 
@@ -51,17 +50,24 @@ for f=1:nsubj
 
 end
 
-% now data are loaded in subjects, an instance of GroupATVB
+%% now data are loaded in subjects, an instance of GroupATVB, you can call Group's methods
 
-...subjects.plotSubject("arni", xdata, titleLabels)     ... plot gaussian fit of a single subect
-...subjects.plotSubjectsSJ2('label', 'arni');
-subjects.plotSubjectsSJ2();
-subjects.plotSubjectsGFit();
-...subjects.plotSubjectsGFit("age", [8, 9]);
-...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
+...subjects.plotSubject("arni", xdata, titleLabels)         ... plot gaussian fit of a single subect
+...subjects.plotSubjectsSJ2("age", [8, 9]);                 ... plot and SJ2 (stanley) metrics of all subject aged 8 & 9
+...subjects.plotSubjectsSJ2('label', 'arni');               ... plot and SJ2 (stanley) metrics of one subject
+...subjects.plotSubjectsSJ2();                              ... plot and SJ2 (stanley) metrics of all subjects
+
+...subjects.plotSubjectsGFit();                             ... plot gaussian fit of all subjects
+...subjects.plotSubjectsGFit("age", [8, 9]);                ... plot gaussian fit of all subject aged 8 & 9
+...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m"); ... plot gaussian fit of all male subject aged 8 & 9
+
+%% or you can get a specific subject instance and work on it
+...arni = subjects.getSubjectByLabel('arni');           ... how to get a specific subject instance
 
 
-subjects.create_tabbed_data(result_file);               ... create results file
+%% create results file
+subjects.create_tabbed_data(result_file);               
 
+%% clear unnecessary variables
 clear f file_name data filename_parts subj files
 clear xlabels xdata ylimits titleLabels taskfolder root_dir data_dir results_folder result_file experiment_folder task_folder nsubj
