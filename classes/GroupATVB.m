@@ -5,30 +5,34 @@ classdef GroupATVB < Group
         function self = GroupATVB(varargin) % len, xlabels, xdata, titleLabels, ylimits
            self@Group(varargin{:});
         end
-
-                
-        function create_tabbed_data(self, filename)
+        
             
+        function create_tabbed_data(self, filename, errors_file)
+            
+            %-----------------------------------------------------
+            % fits
             fid = fopen(filename, 'w');
-
-            if self.subjects{1}.latencies == 15
-                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
-                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
-                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
-                             'e_-1200','e_-800','e_-400','e_-300','e_-200','e_-100','e_50','e_0','e_50','e_100','e_200','e_300','e_400','e_800','e_1200');
-            else
-                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
-                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
-                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
-                             'e_-800','e_-400','e_-300','e_-200','e_-100','e_50','e_0','e_50','e_100','e_200','e_300','e_400','e_800');
-            end
+            fprintf(fid,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                         'subj','group','age','gender','experiment','task','ntrials', 'mu', 'sigma', 'TFsb', 'RFsb', 'sr', 'mp', 'peak', 'e_sim', 'e_contr');
 
             for k=1:self.number
                 self.subjects{k}.writeData(fid);
             end
             fclose(fid);
+            
+            %-----------------------------------------------------
+            % errors
+            feid = fopen(errors_file, 'w');
+            fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                         'subj','group','age','gender','experiment','task','ntrials', 'latency', 'error');
 
-        end 
+            for k=1:self.number
+                self.subjects{k}.writeErrorsData(feid);
+            end
+            
+            fclose(feid);
+        end  
+        
         
         % returns 3 struct(data_mean, data_sd, data_sem)
         function [stat_a_tv, stat_t_av, stat_v_at] = getSubjectsStat(self, filtered_subjects)
@@ -76,6 +80,16 @@ classdef GroupATVB < Group
 %             self.plotDataWithErrorFit(stat_a_tv.data_mean, stat_a_tv.data_sem, stat_a_tv.fit.y, stat_a_tv.fit.mu, stat_a_tv.fit.sigma, title_a_tv);
 %             self.plotDataWithErrorFit(stat_t_av.data_mean, stat_t_av.data_sem, stat_t_av.fit.y, stat_t_av.fit.mu, stat_t_av.fit.sigma, title_a_tv);
 %             self.plotDataWithErrorFit(stat_v_at.data_mean, stat_v_at.data_sem, stat_v_at.fit.y, stat_v_at.fit.mu, stat_v_at.fit.sigma, title_a_tv);
+        end
+        
+        
+        function plotEachSubjectGFit(self, varargin)
+            [filtered_subjects, subjs_title] = self.filterSubjects(varargin{:});
+            nsubj = size(filtered_subjects,1);
+            for s=1:nsubj
+                subj = filtered_subjects{s};
+                subj.plotData(self.xdata, self.titleLabels, self.ylimits);
+            end
         end
         
         function [stat_a_tv, stat_t_av, stat_v_at] = plotSubjectsSJ2(self, varargin)

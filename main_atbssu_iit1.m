@@ -3,9 +3,9 @@ addpath('classes');
 addpath('utility'); 
 
 %% edit this
-root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'sighted_adult_iit_1';
-task_folder         = 'ATBDSU'; ...'ATBDSU';
+root_dir            = '/data/Dropbox/BIODOCS/projects/PsySuite/DATA/';
+experiment_folder   = 'td_ad_iit1';.....
+task_folder         = 'ATBSSU'; ...'ATBDSU';
 results_folder      = 'results';
 result_postfix      = '';
 
@@ -25,6 +25,7 @@ if ~exist(data_dir, 'dir')
 end
 
 result_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder result_postfix], ".dat"));
+errors_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder '_errors' result_postfix], ".dat"));
 
 files           = dir(strcat(data_dir,'/*.txt'));
 nsubj           = length(files);
@@ -58,9 +59,9 @@ clear filename_parts file f files nsubj label
 ...subjects.plotSubjectsSJ2("age", [8, 9]);
 
 ...subjects.plotSubjectsSJ2('label', 'ws');
-subjects.plotSubjectsSJ2();
-subjects.plotSubjectsGFit();
+...subjects.plotSubjectsSJ2();
+...subjects.plotSubjectsGFit();
 ...subjects.plotSubjectsGFit("age", [8, 9]);
 ...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
 
-subjects.create_tabbed_data(result_file);
+subjects.create_tabbed_data(result_file, errors_file);               ... create results file

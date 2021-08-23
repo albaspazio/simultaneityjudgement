@@ -4,8 +4,8 @@ addpath('utility');
 
 %% edit this
 root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'sighted_adult_iit_1';
-task_folder         = 'ATVBSSU';
+experiment_folder   = 'td_ad_iit1';
+task_folder         = 'ATVBDSU';
 results_folder      = 'results';
 result_postfix      = '';
 
@@ -25,6 +25,7 @@ if ~exist(data_dir, 'dir')
 end
 
 result_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder result_postfix], ".dat"));
+errors_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder '_errors' result_postfix], ".dat"));
 
 files           = dir(strcat(data_dir,'/*.txt'));   % list files contained within given folder
 nsubj           = length(files);
@@ -55,13 +56,12 @@ end
 
 ...subjects.plotSubject("arni", xdata, titleLabels)     ... plot gaussian fit of a single subect
 ...subjects.plotSubjectsSJ2('label', 'arni');
-subjects.plotSubjectsSJ2();
-subjects.plotSubjectsGFit();
+...subjects.plotSubjectsSJ2();
+...subjects.plotSubjectsGFit();
 ...subjects.plotSubjectsGFit("age", [8, 9]);
 ...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
 
-
-subjects.create_tabbed_data(result_file);               ... create results file
+subjects.create_tabbed_data(result_file, errors_file);               ... create results file
 
 clear f file_name data filename_parts subj files
 clear xlabels xdata ylimits titleLabels taskfolder root_dir data_dir results_folder result_file experiment_folder task_folder nsubj

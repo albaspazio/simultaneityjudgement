@@ -1,4 +1,4 @@
-classdef SubjectATVB < Subject
+classdef SubjectATVBSSB < Subject
     
     properties
         a_tv
@@ -9,7 +9,7 @@ classdef SubjectATVB < Subject
     
     methods
         
-        function self = SubjectATVB(lab, ag, gend, grp, exp)
+        function self = SubjectATVBSSB(lab, ag, gend, grp, exp)
             self@Subject(lab, ag, gend, grp, exp); 
         end            
             

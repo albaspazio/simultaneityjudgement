@@ -9,6 +9,7 @@ classdef Subject
         xdata
         ntrials
         latencies
+        err_sim
     end
     
     methods

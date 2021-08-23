@@ -3,8 +3,8 @@ addpath('classes');
 addpath('utility'); 
 
 %% edit this
-root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'blind_adult_iit_1'; ...'lv_children_chiossone'; ...'sighted_children_bolzaneto';
+root_dir            = '/data/Dropbox/BIODOCS/projects/PsySuite/DATA/';
+experiment_folder   =  'cb_ad_iit'; ...'td_ch_bolz';...  'lv_ch_chios'; ... 'td_ad_iit1';.....   
 task_folder         = 'ATBSSU';
 results_folder      = 'results';
 result_postfix      = '';
@@ -25,6 +25,7 @@ if ~exist(data_dir, 'dir')
 end
 
 result_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder result_postfix], ".dat"));
+errors_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder '_errors' result_postfix], ".dat"));
 
 files           = dir(strcat(data_dir,'/*.txt'));
 nsubj           = length(files);
@@ -50,7 +51,8 @@ end
 
 clear filename_parts file f files nsubj label
 
-...subjects.plotSubject("ws", xdata, titleLabels)
+...subjects.plotSubject("bd", xdata, titleLabels)
+...subjects.plotSubject("dg", xdata, titleLabels)
 
 ...arni = subjects.getSubjectByLabel('ws');
 
@@ -58,9 +60,9 @@ clear filename_parts file f files nsubj label
 ...subjects.plotSubjectsSJ2("age", [8, 9]);
 
 ...subjects.plotSubjectsSJ2('label', 'ws');
-subjects.plotSubjectsSJ2();
-subjects.plotSubjectsGFit();
+...subjects.plotSubjectsSJ2();
+...subjects.plotSubjectsGFit();
 ...subjects.plotSubjectsGFit("age", [8, 9]);
 ...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
 
-subjects.create_tabbed_data(result_file);
+subjects.create_tabbed_data(result_file, errors_file);               ... create results file

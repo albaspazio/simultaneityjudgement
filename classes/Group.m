@@ -87,7 +87,7 @@ classdef Group
                end
             end
         end
-                
+        
         %% PLOT DATA
         function plotSubject(self, label, xdata, titleLabels)
             self.getSubjectByLabel(label).plotData(xdata, titleLabels, self.ylimits);
@@ -131,10 +131,8 @@ classdef Group
             text(6,20, ['mu = ' num2str(mu)]);
             text(6,10, ['sigma = ' num2str(sigma)]);
         end
-        
     end
-  
-    
+      
    methods(Static)
        
         function str = filterString(varargin)

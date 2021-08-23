@@ -5,6 +5,8 @@ classdef SubjectATBSS < Subject
     properties
         a_t
         errors
+        err_control     % highest delay, control condition
+
     end
     
     methods
@@ -35,7 +37,7 @@ classdef SubjectATBSS < Subject
                     value = 0;
                 end
 
-                if(data.type(n) == 0)
+                if(data.type(n) == 12)
 
                     ... put simultaneous trials in all three arrays
                     data_a_t(midlatency)        = data_a_t(midlatency) + value;
@@ -44,11 +46,11 @@ classdef SubjectATBSS < Subject
                 else
                     ... shifted trials
                     switch(num2str(data.type(n)))
-                        case '3'
+                        case '102'
                             first_smaller = true;
                             [data_a_t, cnt_data_a_t] = self.putValue(value, data_a_t, cnt_data_a_t, data.delay(n), first_smaller);
 
-                        case '4'
+                        case '201'
                             first_smaller = false;
                             [data_a_t, cnt_data_a_t] = self.putValue(value, data_a_t, cnt_data_a_t, data.delay(n), first_smaller);
                     end
@@ -182,29 +184,37 @@ classdef SubjectATBSS < Subject
                     self.errors(t) = self.a_t.data(t);
                 end
             end
+            
+            self.err_sim = self.errors(midlatency);
+            self.err_control = mean([self.errors(1) self.errors(end)]);
+            
         end
         
         function writeData(self, fid)
             
-            if self.latencies == 15
-                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
-                             self.label, self.group, self.age, self.gender, self.experiment, 'A_T', self.a_t.ntrial, ...
-                             self.a_t.gfit.mu, self.a_t.gfit.sigma,...
-                             self.a_t.sj2fit.pm.SJ2_TFsb, self.a_t.sj2fit.pm.SJ2_RFsb, self.a_t.sj2fit.pm.SJ2_sr, self.a_t.sj2fit.pm.SJ2_mp, self.a_t.sj2fit.pm.SJ2_peak, ...
-                             self.errors(1), self.errors(2),self.errors(3),self.errors(4),self.errors(5),self.errors(6),self.errors(7),self.errors(8),self.errors(9),self.errors(10),self.errors(11),self.errors(12),self.errors(13),self.errors(14),self.errors(15));
-            else
-                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
-                             self.label, self.group, self.age, self.gender, self.experiment, 'A_T', self.a_t.ntrial, ...
-                             self.a_t.gfit.mu, self.a_t.gfit.sigma,...
-                             self.a_t.sj2fit.pm.SJ2_TFsb, self.a_t.sj2fit.pm.SJ2_RFsb, self.a_t.sj2fit.pm.SJ2_sr, self.a_t.sj2fit.pm.SJ2_mp, self.a_t.sj2fit.pm.SJ2_peak, ...
-                             self.errors(1), self.errors(2),self.errors(3),self.errors(4),self.errors(5),self.errors(6),self.errors(7),self.errors(8),self.errors(9),self.errors(10),self.errors(11),self.errors(12),self.errors(13));
+            fprintf(fid, '%s\t%s\t%d\t%s\t%s\t%s\t%d\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n', ...
+                         self.label, self.group, self.age, self.gender, self.experiment, 'A_T', self.a_t.ntrial, ...
+                         self.a_t.gfit.mu, self.a_t.gfit.sigma,self.a_t.sj2fit.pm.SJ2_TFsb, self.a_t.sj2fit.pm.SJ2_RFsb, self.a_t.sj2fit.pm.SJ2_sr, self.a_t.sj2fit.pm.SJ2_mp, self.a_t.sj2fit.pm.SJ2_peak, ...
+                         self.err_sim, self.err_control);
+        end
+        
+       
+        function writeErrorsData(self, fid)
+            
+            for l=1:ceil(self.latencies/2)
+                fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%d\t%4.2f\n', ...
+                             self.label, self.group, self.age, self.gender, self.experiment, 'A_T', self.a_t.ntrial, l, mean([self.errors(l) self.errors(self.latencies + 1 - l)]));
+            
+%             for l=1:self.latencies
+%                 fprintf(fid,'%s\t%s\t%d\t%s\t%s\t%s\t%d\t%d\t%4.2f\n', ...
+%                              self.label, self.group, self.age, self.gender, self.experiment, 'A_T', self.a_t.ntrial, l, self.errors(l));
             end
         end
         
         function plotData(self, xdata, titles, ylimits)
             
             d1 = self.a_t.data;
-            y1 = self.a_t.fit.y;
+            y1 = self.a_t.gfit.y;
 
             figure
             hold on; 

@@ -6,30 +6,6 @@ classdef GroupATBSS < Group
            self@Group(varargin{:});
         end
     
-        
-        function create_tabbed_data(self, filename)
-            
-            fid = fopen(filename, 'w');
-
-            if self.subjects{1}.latencies == 15
-                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
-                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
-                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
-                             'e_-1200','e_-800','e_-400','e_-300','e_-200','e_-100','e_-50','e_0','e_50','e_100','e_200','e_300','e_400','e_800','e_1200');
-            else
-                fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
-                             'subj','group','age','gender','experiment','task','ntrials', 'mu','sigma', ...
-                             'TFsb', 'RFsb', 'sr', 'mp', 'peak',...
-                             'e_-800','e_-400','e_-300','e_-200','e_-100','e_-50','e_0','e_50','e_100','e_200','e_300','e_400','e_800');
-            end
-
-            for k=1:self.number
-                self.subjects{k}.writeData(fid);
-            end
-            fclose(fid);
-
-        end         
-        
         function stat_a_t = getSubjectsStat(self, filtered_subjects)
             
             % CALCULATE DATA
@@ -45,6 +21,34 @@ classdef GroupATBSS < Group
             
             stat_a_t = StatsFits.getStat(data_a_t);
         end        
+        
+        
+            
+        function create_tabbed_data(self, filename, errors_file)
+            
+            %-----------------------------------------------------
+            % fits
+            fid = fopen(filename, 'w');
+            fprintf(fid,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                         'subj','group','age','gender','experiment','task','ntrials', 'mu', 'sigma', 'TFsb', 'RFsb', 'sr', 'mp', 'peak', 'err_sim', 'err_control');
+
+            for k=1:self.number
+                self.subjects{k}.writeData(fid);
+            end
+            fclose(fid);
+            
+            %-----------------------------------------------------
+            % errors
+            feid = fopen(errors_file, 'w');
+            fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', ...
+                         'subj','group','age','gender','experiment','task','ntrials', 'latency', 'error');
+
+            for k=1:self.number
+                self.subjects{k}.writeErrorsData(feid);
+            end
+            
+            fclose(feid);
+        end          
         
         %% PLOT DATA  
         function plotSubjectsGFit(self, varargin)

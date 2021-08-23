@@ -3,17 +3,17 @@ addpath('classes');
 addpath('utility'); 
 
 %% edit this
-root_dir            = '/data/Dropbox/BIODOCS/projects/Apps/PsySuite/DATA/';
-experiment_folder   = 'sighted_children_bolzaneto'; ...'sighted_adult_iit_2'; ...
+root_dir            = '/data/Dropbox/BIODOCS/projects/PsySuite/DATA/';
+experiment_folder   = 'td_ch_bolz'; ...'td_ad_iit2'; ...
 task_folder         = 'ATVBSSU';
 results_folder      = 'results';
-result_postfix      = '_all';
+result_postfix      = '_30';
 
 %% group variables
-xlabels         = {'-1200','-800','-400','-300','-200','-100','-50','0','50','100','200','300','400','800','1200'};
+xlabels         = {'-800','-400','-300','-200','-100','-50','0','50','100','200','300','400','800'};
 titleLabels     = {'A vs TV', 'T vs AV', 'V vs AT'};
 ylimits         = [0, 100];
-xdata           = [-1200, -800, -400, -300, -200, -100, -50, 0, 50, 100, 200, 300, 400, 800, 1200];
+xdata           = [-800, -400, -300, -200, -100, -50, 0, 50, 100, 200, 300, 400, 800];
 
 %% start processing
 
@@ -24,7 +24,10 @@ if ~exist(data_dir, 'dir')
     return;
 end
 
+data_dir = '/data/Dropbox/BIODOCS/projects/PsySuite/DATA/td_ch_bolz/ATVBSSU/sub_groups/gfit_disc';
+
 result_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder result_postfix], ".dat"));
+errors_file     = fullfile(pwd, results_folder, strcat(experiment_folder, "_", [task_folder '_errors' result_postfix], ".dat"));
 
 files           = dir(strcat(data_dir,'/*.txt'));   % list files contained within given folder
 nsubj           = length(files);
@@ -53,18 +56,20 @@ end
 
 ...subjects.plotSubject("arni", xdata, titleLabels)
 
-...arni = subjects.getSubjectByLabel('arni');
+...arni = subjects.getSubjectByLabel('petr');
 
 
 ...subjects.plotSubjectsSJ2("age", [8, 9]);
 
 ...subjects.plotSubjectsSJ2('label', 'arni');
-subjects.plotSubjectsSJ2();
-subjects.plotSubjectsGFit();
+    
+...subjects.plotSubjectsSJ2();
+...subjects.plotSubjectsGFit();
+...subjects.plotEachSubjectGFit();
 ...subjects.plotSubjectsGFit("age", [8, 9]);
 ...subjects.plotSubjectsGFit("age", [8, 9], "gender", "m");
 
-subjects.create_tabbed_data(result_file);
+...subjects.create_tabbed_data(result_file, errors_file);               ... create results file
 
 clear f file_name data filename_parts subj files
 clear xlabels xdata ylimits titleLabels taskfolder root_dir data_dir results_folder result_file experiment_folder task_folder nsubj
